@@ -1,0 +1,23 @@
+version: '2.3'
+services:
+  lab:
+    build: ./
+    container_name: pydev-poetry-jupyter
+    volumes:
+      - ./:/work
+      - ~/dataset:/dataset
+    ports:
+      - "8888:8888"
+    command: jupyter lab --notebook-dir /work --ip=0.0.0.0 --allow-root
+
+  lab-gpu:
+    build: ./
+    shm_size: '2gb'
+    container_name: pydev-poetry-jupyter-gpu
+    runtime: nvidia
+    volumes:
+      - ./:/work
+    ports:
+      - "8889:8889"
+    command: jupyter lab --notebook-dir /work --port 8889 --ip=0.0.0.0
+
