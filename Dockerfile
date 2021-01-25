@@ -49,17 +49,18 @@ RUN chown -R ${NB_UID} /workspace
 USER ${NB_USER}
 
 ENV PATH=${HOME}/.local/bin:$PATH
+ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 
 RUN pip3 install \
     # Install tools for Jupyter Notebook/Lab
     jupyter \
-    jupyterlab \
+    jupyterlab==2.* \
     jupytext \
     ipywidgets \
     jupyter-contrib-nbextensions \
     jupyter-nbextensions-configurator \
     # Install tools for Development \
-    autopep8 black isort --user \
+    pytest autopep8 black isort --user \
     && \
     echo Done
 
@@ -78,34 +79,31 @@ RUN jupyter contrib nbextension install --user && \
     echo Done
 
 RUN pip3 install \
-    #jupyterlab_code_formatter \
+    jupyterlab_code_formatter \
     lckr-jupyterlab-variableinspector \
     && \
     echo Done
+
+# See https://github.com/ryantam626/jupyterlab_code_formatter/issues/193#issuecomment-761558266
+# Also this creates /usr/etc/jupyter which requires root auth
+USER root
+RUN jupyter server extension enable --py jupyterlab_code_formatter
+RUN jupyter serverextension enable jupytext
+USER ${NB_USER}
 
 # Install/enable extension for JupyterLab users
 RUN jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
     jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
     jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
+    jupyter labextension install jupyterlab-jupytext --no-build && \
+    jupyter labextension update --all && \
     jupyter lab build -y && \
     jupyter lab clean -y && \
     npm cache clean --force && \
     rm -rf ${HOME}/.cache/yarn && \
     rm -rf ${HOME}/.node-gyp && \
     echo Done
-
-# Setup default formatter (For Python Users only)
-#RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter && echo '\
-#{\n\
-#    "preferences": {\n\
-#        "default_formatter": {\n\
-#            "python": "black",\n\
-#        }\n\
-#    }\n\
-#}\n\
-#\
-#'>> ${HOME}/.jupyter/lab/user-settings/@ryantam626/jupyterlab_code_formatter/settings.jupyterlab-settings
 
 # Set color theme Monokai++ by default (The selection is due to my hobby)
 RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension && echo '\
