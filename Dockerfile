@@ -68,14 +68,14 @@ RUN pip3 install \
 RUN jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
     # enable extensions what you want
-    jupyter nbextension enable code_prettify/autopep8 && \
-    jupyter nbextension enable select_keymap/main && \
-    jupyter nbextension enable highlight_selected_word/main && \
-    jupyter nbextension enable toggle_all_line_numbers/main && \
-    jupyter nbextension enable varInspector/main && \
-    jupyter nbextension enable toc2/main && \
-    jupyter nbextension enable equation-numbering/main && \
-    jupyter nbextension enable execute_time/ExecuteTime && \
+    jupyter nbextension enable code_prettify/autopep8 --user && \
+    jupyter nbextension enable select_keymap/main --user && \
+    jupyter nbextension enable highlight_selected_word/main --user&& \
+    jupyter nbextension enable toggle_all_line_numbers/main --user && \
+    jupyter nbextension enable varInspector/main --user && \
+    jupyter nbextension enable toc2/main --user && \
+    jupyter nbextension enable equation-numbering/main --user && \
+    jupyter nbextension enable execute_time/ExecuteTime --user && \
     echo Done
 
 RUN pip3 install \
@@ -88,8 +88,9 @@ RUN pip3 install \
 # Also this creates /usr/etc/jupyter which requires root auth
 USER root
 RUN jupyter server extension enable --py jupyterlab_code_formatter
-RUN jupyter serverextension enable jupytext
 USER ${NB_USER}
+
+RUN pip3 install jupytext==1.7.*
 
 # Install/enable extension for JupyterLab users
 RUN jupyter labextension install @jupyterlab/toc --no-build && \
@@ -97,7 +98,7 @@ RUN jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
     jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
     jupyter labextension install jupyterlab-jupytext --no-build && \
-    jupyter labextension update --all && \
+    jupyter serverextension enable jupytext && \
     jupyter lab build -y && \
     jupyter lab clean -y && \
     npm cache clean --force && \
@@ -126,3 +127,4 @@ RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension &
 EXPOSE 8888
 
 RUN pip3 install opencv-python numpy matplotlib
+
