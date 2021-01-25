@@ -54,7 +54,7 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 RUN pip3 install \
     # Install tools for Jupyter Notebook/Lab
     jupyter \
-    jupyterlab==2.* \
+    jupyterlab \
     jupytext \
     ipywidgets \
     jupyter-contrib-nbextensions \
@@ -68,6 +68,7 @@ RUN pip3 install \
 RUN jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
     # enable extensions what you want
+    jupyter serverextension enable jupytext --user && \
     jupyter nbextension enable code_prettify/autopep8 --user && \
     jupyter nbextension enable select_keymap/main --user && \
     jupyter nbextension enable highlight_selected_word/main --user&& \
@@ -90,15 +91,12 @@ USER root
 RUN jupyter server extension enable --py jupyterlab_code_formatter
 USER ${NB_USER}
 
-RUN pip3 install jupytext==1.7.*
-
 # Install/enable extension for JupyterLab users
 RUN jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
     jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
     jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
     jupyter labextension install jupyterlab-jupytext --no-build && \
-    jupyter serverextension enable jupytext && \
     jupyter lab build -y && \
     jupyter lab clean -y && \
     npm cache clean --force && \
