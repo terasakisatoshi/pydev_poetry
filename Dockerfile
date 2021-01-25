@@ -51,18 +51,27 @@ USER ${NB_USER}
 ENV PATH=${HOME}/.local/bin:$PATH
 ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 
-RUN pip3 install \
-    # Install tools for Jupyter Notebook/Lab
-    jupyter \
-    jupyterlab \
-    jupytext \
-    ipywidgets \
-    jupyter-contrib-nbextensions \
-    jupyter-nbextensions-configurator \
-    # Install tools for Development \
-    pytest autopep8 black isort --user \
-    && \
-    echo Done
+#RUN pip3 install \
+#    # Install tools for Jupyter Notebook/Lab
+#    jupyter \
+#    jupyterlab \
+#    jupytext \
+#    ipywidgets \
+#    jupyter-contrib-nbextensions \
+#    jupyter-nbextensions-configurator \
+#    jupyterlab_code_formatter \
+#    lckr-jupyterlab-variableinspector \
+    # Install tools for development \
+#    poetry autopep8 black isort \
+#    --user \
+#    && \
+#    echo Done
+
+COPY pyproject.toml /workspace
+RUN pip3 install poetry && \
+    poetry install && \
+    poetry export -f requirements.txt --dev --output requirements.txt && \
+    pip3 install -r requirements.txt --user
 
 # Install/enable extension for Jupyter Notebook users
 RUN jupyter contrib nbextension install --user && \
@@ -77,12 +86,6 @@ RUN jupyter contrib nbextension install --user && \
     jupyter nbextension enable toc2/main --user && \
     jupyter nbextension enable equation-numbering/main --user && \
     jupyter nbextension enable execute_time/ExecuteTime --user && \
-    echo Done
-
-RUN pip3 install \
-    jupyterlab_code_formatter \
-    lckr-jupyterlab-variableinspector \
-    && \
     echo Done
 
 # See https://github.com/ryantam626/jupyterlab_code_formatter/issues/193#issuecomment-761558266
@@ -123,6 +126,3 @@ RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension &
 ' >> ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension/tracker.jupyterlab-settings
 
 EXPOSE 8888
-
-RUN pip3 install opencv-python numpy matplotlib
-

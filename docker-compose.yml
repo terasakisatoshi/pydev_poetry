@@ -1,24 +1,31 @@
 version: '2.3'
 services:
-  lab:
+  python:
     build: ./
-    container_name: pydev-poetry-lab
+    container_name: pydev-poetry-jupyter
     volumes:
-      - ./:/work
+      - ./:/workspace
       - ~/dataset:/dataset
-    ports:
-      - "8888:8888"
-    command: jupyter lab --notebook-dir /work --ip=0.0.0.0 --allow-root
-
+  
   jupyter:
     build: ./
     container_name: pydev-poetry-jupyter
     volumes:
-      - ./:/work
+      - ./:/workspace
       - ~/dataset:/dataset
     ports:
       - "8888:8888"
-    command: jupyter notebook --notebook-dir /work --ip=0.0.0.0 --allow-root
+    command: jupyter notebook --notebook-dir /workspace --ip=0.0.0.0 --allow-root
+
+  lab:
+    build: ./
+    container_name: pydev-poetry-lab
+    volumes:
+      - ./:/workspace
+      - ~/dataset:/dataset
+    ports:
+      - "8888:8888"
+    command: jupyter lab --notebook-dir /workspace --ip=0.0.0.0 --allow-root
 
   lab-gpu:
     build: ./
@@ -26,8 +33,8 @@ services:
     container_name: pydev-poetry-lab-gpu
     runtime: nvidia
     volumes:
-      - ./:/work
+      - ./:/workspace
     ports:
       - "8889:8889"
-    command: jupyter lab --notebook-dir /work --port 8889 --ip=0.0.0.0
+    command: jupyter lab --notebook-dir /workspace --port 8889 --ip=0.0.0.0
 
