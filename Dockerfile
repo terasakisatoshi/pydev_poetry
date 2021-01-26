@@ -69,7 +69,7 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 
 COPY pyproject.toml /workspace
 RUN pip3 install poetry && \
-    poetry install && \
+    poetry install --no-root && \
     poetry export -f requirements.txt --dev --output requirements.txt && \
     pip3 install -r requirements.txt --user
 
