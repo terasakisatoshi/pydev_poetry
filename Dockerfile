@@ -42,9 +42,9 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
-WORKDIR /workspace
-RUN mkdir -p /workspace
-RUN chown -R ${NB_UID} /workspace
+WORKDIR /workspaces
+RUN mkdir -p /workspaces
+RUN chown -R ${NB_UID} /workspaces
 
 USER ${NB_USER}
 
@@ -67,25 +67,24 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 #    && \
 #    echo Done
 
-COPY pyproject.toml /workspace
+COPY pyproject.toml /workspaces
 RUN pip3 install poetry && \
     poetry install --no-root && \
-    poetry export -f requirements.txt --dev --output requirements.txt && \
-    pip3 install -r requirements.txt --user
+    echo Done
 
 # Install/enable extension for Jupyter Notebook users
-RUN jupyter contrib nbextension install --user && \
-    jupyter nbextensions_configurator enable --user && \
+RUN poetry run jupyter contrib nbextension install --user && \
+    poetry run jupyter nbextensions_configurator enable --user && \
     # enable extensions what you want
-    jupyter serverextension enable jupytext --user && \
-    jupyter nbextension enable code_prettify/autopep8 --user && \
-    jupyter nbextension enable select_keymap/main --user && \
-    jupyter nbextension enable highlight_selected_word/main --user&& \
-    jupyter nbextension enable toggle_all_line_numbers/main --user && \
-    jupyter nbextension enable varInspector/main --user && \
-    jupyter nbextension enable toc2/main --user && \
-    jupyter nbextension enable equation-numbering/main --user && \
-    jupyter nbextension enable execute_time/ExecuteTime --user && \
+    poetry run jupyter serverextension enable jupytext --user && \
+    poetry run jupyter nbextension enable code_prettify/autopep8 --user && \
+    poetry run jupyter nbextension enable select_keymap/main --user && \
+    poetry run jupyter nbextension enable highlight_selected_word/main --user&& \
+    poetry run jupyter nbextension enable toggle_all_line_numbers/main --user && \
+    poetry run jupyter nbextension enable varInspector/main --user && \
+    poetry run jupyter nbextension enable toc2/main --user && \
+    poetry run jupyter nbextension enable equation-numbering/main --user && \
+    poetry run jupyter nbextension enable execute_time/ExecuteTime --user && \
     echo Done
 
 # See https://github.com/ryantam626/jupyterlab_code_formatter/issues/193#issuecomment-761558266
@@ -95,13 +94,13 @@ RUN jupyter server extension enable --py jupyterlab_code_formatter
 USER ${NB_USER}
 
 # Install/enable extension for JupyterLab users
-RUN jupyter labextension install @jupyterlab/toc --no-build && \
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
-    jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
-    jupyter labextension install jupyterlab-jupytext --no-build && \
-    jupyter lab build -y && \
-    jupyter lab clean -y && \
+RUN poetry run jupyter labextension install @jupyterlab/toc --no-build && \
+    poetry run jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
+    poetry run jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
+    poetry run jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
+    poetry run jupyter labextension install jupyterlab-jupytext --no-build && \
+    poetry run jupyter lab build -y && \
+    poetry run jupyter lab clean -y && \
     npm cache clean --force && \
     rm -rf ${HOME}/.cache/yarn && \
     rm -rf ${HOME}/.node-gyp && \
