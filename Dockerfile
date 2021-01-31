@@ -90,7 +90,7 @@ RUN poetry run jupyter contrib nbextension install --user && \
 # See https://github.com/ryantam626/jupyterlab_code_formatter/issues/193#issuecomment-761558266
 # Also this creates /usr/etc/jupyter which requires root auth
 USER root
-RUN jupyter server extension enable --py jupyterlab_code_formatter
+RUN poetry run jupyter server extension enable --py jupyterlab_code_formatter
 USER ${NB_USER}
 
 # Install/enable extension for JupyterLab users
