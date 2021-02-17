@@ -68,7 +68,8 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 #    echo Done
 
 COPY pyproject.toml /workspaces
-RUN pip3 install poetry && \
+RUN pip3 --disable-pip-version-check \
+    install poetry && \
     poetry install --no-root && \
     echo Done
 
@@ -86,12 +87,6 @@ RUN poetry run jupyter contrib nbextension install --user && \
     poetry run jupyter nbextension enable equation-numbering/main --user && \
     poetry run jupyter nbextension enable execute_time/ExecuteTime --user && \
     echo Done
-
-# See https://github.com/ryantam626/jupyterlab_code_formatter/issues/193#issuecomment-761558266
-# Also this creates /usr/etc/jupyter which requires root auth
-USER root
-RUN jupyter server extension enable --py jupyterlab_code_formatter
-USER ${NB_USER}
 
 # Install/enable extension for JupyterLab users
 RUN poetry run jupyter labextension install @jupyterlab/toc --no-build && \
