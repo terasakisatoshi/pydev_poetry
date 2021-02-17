@@ -13,7 +13,6 @@ python = "^3.8"
 numpy = "^1.19.5"
 matplotlib = "^3.3.3"
 opencv-python = "^4.5.1"
-pytest = "^6.2.2"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
@@ -29,6 +28,7 @@ jupyter-contrib-nbextensions = "^0.5.1"
 jupyter_nbextensions_configurator = "^0.4.1"
 jupyterlab-code-formatter = "^1.4.2"
 lckr-jupyterlab-variableinspector = "^3.0.6"
+pytest = "^6.2.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
