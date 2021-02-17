@@ -1,4 +1,4 @@
-.phony: all, build, test
+.phony: all, build, test, clean
 
 all: build
 
@@ -9,3 +9,7 @@ build:
 
 test:
 	poetry run pytest
+
+clean:
+	rm -f poetry.lock
+	docker-compose down
