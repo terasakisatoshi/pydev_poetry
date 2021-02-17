@@ -68,7 +68,8 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 #    echo Done
 
 COPY pyproject.toml /workspaces
-RUN pip3 install poetry && \
+RUN pip3 --disable-pip-version-check \
+    install poetry && \
     poetry install --no-root && \
     echo Done
 
