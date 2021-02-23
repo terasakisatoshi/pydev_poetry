@@ -6,8 +6,8 @@ build:
 	rm -f poetry.lock
 	rm -rf .venv
 	rm -f envpath.txt
-	docker build -t pydev .
-	docker run --name pydevcontainer pydev poetry env info -p >> envpath.txt
+	docker build -t pydev-poetry .
+	docker run --name pydevcontainer pydev-poetry poetry env info -p >> envpath.txt
 	docker cp pydevcontainer:$(shell cat envpath.txt) .venv
 	docker stop pydevcontainer && docker rm pydevcontainer
 	docker-compose build
