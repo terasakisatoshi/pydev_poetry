@@ -42,9 +42,9 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
-WORKDIR /workspaces
-RUN mkdir -p /workspaces
-RUN chown -R ${NB_UID} /workspaces
+WORKDIR /workspaces/
+RUN mkdir -p /workspaces/
+RUN chown -R ${NB_UID} /workspaces/
 
 USER ${NB_USER}
 
@@ -67,7 +67,7 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 #    && \
 #    echo Done
 
-COPY pyproject.toml /workspaces
+COPY pyproject.toml poetry.toml /workspaces/
 RUN pip3 --disable-pip-version-check \
     install poetry && \
     poetry install --no-root && \
