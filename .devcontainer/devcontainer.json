@@ -15,6 +15,21 @@
 	"extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance",
+		// dev utils regarding Git/GitHub
+		"github.vscode-pull-request-github",
+		"mhutchie.git-graph",
+		"donjayamanne.githistory",
+		"eamodio.gitlens",
+		// dev utils regarding Editor
+		"shardulm94.trailing-spaces",
+		"cliffordfajardo.hightlight-selections-vscode",
+		"wdawson.better-kill-ring", // great kill ring
+		"oderwat.indent-rainbow",
+		"visualstudioexptteam.vscodeintellicode",
+		//"tabnine.tabnine-vscode",
+		// dev utils regarding vscode IDE
+		"wayou.vscode-icons-mac",
+		"mutantdino.resourcemonitor",
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
