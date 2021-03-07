@@ -7,8 +7,8 @@ build:
 	rm -rf .venv
 	rm -f envpath.txt
 	docker build -t pydev-poetry .
-	docker run --name pydevcontainer pydev-poetry poetry env info -p >> envpath.txt
-	docker cp pydevcontainer:$(shell cat envpath.txt) .venv
+	docker run --name pydevcontainer pydev-poetry
+	docker cp pydevcontainer:/workspaces/.venv .venv
 	docker stop pydevcontainer && docker rm pydevcontainer
 	docker-compose build
 	docker-compose run --rm python poetry install
