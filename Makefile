@@ -3,7 +3,6 @@
 all: build
 
 build:
-	rm -f poetry.lock
 	rm -rf .venv
 	rm -f envpath.txt
 	docker build -t pydev-poetry .
@@ -17,6 +16,5 @@ test:
 	docker-compose run --rm python poetry run pytest
 
 clean:
-	rm -f poetry.lock
 	rm -r .venv
 	docker-compose down
