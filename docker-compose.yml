@@ -5,7 +5,7 @@ services:
     image: pydev-poetry
     container_name: pydev-poetry-jupyter
     volumes:
-      - ./:/workspaces
+      - ./:/work
       - ~/dataset:/dataset
   
   jupyter:
@@ -13,22 +13,22 @@ services:
     image: pydev-poetry
     container_name: pydev-poetry-jupyter
     volumes:
-      - ./:/workspaces
+      - ./:/work
       - ~/dataset:/dataset
     ports:
       - "8888:8888"
-    command: /bin/bash -c "poetry run jupyter notebook --notebook-dir /workspaces --ip=0.0.0.0 --allow-root"
+    command: /bin/bash -c "poetry run jupyter notebook --notebook-dir /work --ip=0.0.0.0 --allow-root"
 
   lab:
     #build: ./
     image: pydev-poetry
     container_name: pydev-poetry-lab
     volumes:
-      - ./:/workspaces
+      - ./:/work
       - ~/dataset:/dataset
     ports:
       - "8888:8888"
-    command: /bin/bash -c "poetry run jupyter lab --notebook-dir /workspaces --ip=0.0.0.0 --allow-root"
+    command: /bin/bash -c "poetry run jupyter lab --notebook-dir /work --ip=0.0.0.0 --allow-root"
 
   lab-gpu:
     #build: ./
@@ -37,8 +37,8 @@ services:
     container_name: pydev-poetry-lab-gpu
     runtime: nvidia
     volumes:
-      - ./:/workspaces
+      - ./:/work
     ports:
       - "8889:8889"
-    command: /bin/bash -c "poetry run jupyter lab --notebook-dir /workspaces --port 8889 --ip=0.0.0.0 --allow-root"
+    command: /bin/bash -c "poetry run jupyter lab --notebook-dir /work --port 8889 --ip=0.0.0.0 --allow-root"
 
