@@ -4,7 +4,6 @@ all: build
 
 build:
 	rm -rf .venv
-	rm -f envpath.txt
 	docker build -t pydev-poetry .
 	docker run --name pydevcontainer pydev-poetry
 	docker cp pydevcontainer:/workspaces/.venv .venv
