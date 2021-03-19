@@ -1,8 +1,9 @@
-version: '2.3'
+version: '3'
 services:
   python:
     #build: ./
     image: pydev-poetry
+    shm_size: '8gb'
     container_name: pydev-poetry-jupyter
     volumes:
       - ./:/work
@@ -11,6 +12,7 @@ services:
   jupyter:
     #build: ./
     image: pydev-poetry
+    shm_size: '8gb'
     container_name: pydev-poetry-jupyter
     volumes:
       - ./:/work
@@ -22,6 +24,7 @@ services:
   lab:
     #build: ./
     image: pydev-poetry
+    shm_size: '8gb'
     container_name: pydev-poetry-lab
     volumes:
       - ./:/work
@@ -33,12 +36,12 @@ services:
   lab-gpu:
     #build: ./
     image: pydev-poetry
-    shm_size: '2gb'
+    shm_size: '8gb'
     container_name: pydev-poetry-lab-gpu
     runtime: nvidia
     volumes:
       - ./:/work
     ports:
-      - "8889:8889"
-    command: /bin/bash -c "poetry run jupyter lab --notebook-dir /work --port 8889 --ip=0.0.0.0 --allow-root"
+      - "8888:8888"
+    command: /bin/bash -c "poetry run jupyter lab --notebook-dir /work --port 8888 --ip=0.0.0.0 --allow-root"
 
