@@ -15,5 +15,9 @@ test:
 	docker-compose run --rm python poetry run pytest
 
 clean:
-	rm -r .venv
+	rm -rf .venv
+	rm -rf .ipynb_checkpoints playground/notebooks/.ipynb_checkpoints
+	rm -rf .mypy_cache
+	rm -rf .pytest_cache
+
 	docker-compose down
