@@ -73,8 +73,8 @@ $ docker-compose down
 
 # Appendix(for lazy people)
 
-Q: Can we utilize this repository without using Docker?
-A: Yes, try to install Python 3.8
+- Q: Can we utilize this repository without using Docker?
+- A: Yes, try to install Python 3.8
 ```console
 $ sudo apt-get install python3.8 python-3.8-dev
 $ poetry env use 3.8
@@ -82,8 +82,8 @@ $ poetry install
 $ poetry add torch # for example
 ```
 
-Q: I'm using Python 3.7. I don't want to install python 3.8.
-A: Please edit `pyproject.toml` and replace `python = "^3.8"` with `python = "^3.7"`. Namely:
+- Q: I'm using Python 3.7. I don't want to install python 3.8.
+- A: Please edit `pyproject.toml` and replace `python = "^3.8"` with `python = "^3.7"`. Namely:
 
 - Before:
 ```
@@ -96,5 +96,6 @@ A: Please edit `pyproject.toml` and replace `python = "^3.8"` with `python = "^3
 12   │ python = "^3.7"
 ```
 
-Q: I'm using Windows. How do I install `make`?
-A: Please install WSL2 or send me a PR to support Windows environment.
+- Q: I'm using Windows. How do I install `make`?
+- A1: Please install WSL2 or send me a PR to support Windows environment.
+- A2: Use winget.
