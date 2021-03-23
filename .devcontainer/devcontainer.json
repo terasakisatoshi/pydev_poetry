@@ -35,7 +35,6 @@
 	// "forwardPorts": [],
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	//"postCreateCommand": "rm -f poetry.lock && poetry install",
-	"workspaceFolder": "/work",
 	"runArgs": [
 		"-v",
 		"${env:PWD}:/work",
