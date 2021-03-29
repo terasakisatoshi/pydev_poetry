@@ -7,7 +7,7 @@ services:
     container_name: pydev-poetry-jupyter
     volumes:
       - ./:/work
-      - ~/dataset:/dataset
+      - ~/dataset:/home/jovyan/dataset
   
   jupyter:
     #build: ./
@@ -16,7 +16,7 @@ services:
     container_name: pydev-poetry-jupyter
     volumes:
       - ./:/work
-      - ~/dataset:/dataset
+      - ~/dataset:/home/jovyan/dataset
     ports:
       - "8888:8888"
     command: /bin/bash -c "poetry run jupyter notebook --notebook-dir /work --ip=0.0.0.0 --allow-root"
@@ -28,7 +28,7 @@ services:
     container_name: pydev-poetry-lab
     volumes:
       - ./:/work
-      - ~/dataset:/dataset
+      - ~/dataset:/home/jovyan/dataset
     ports:
       - "8888:8888"
     command: /bin/bash -c "poetry run jupyter lab --notebook-dir /work --ip=0.0.0.0 --allow-root"

@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.155.1/containers/docker-existing-dockerfile
 {
-	"name": "Dev Env",
+	"name": "Existing Dockerfile",
 	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
@@ -39,14 +39,12 @@
 		"-v",
 		"${env:PWD}:/work",
 		"-w",
-		"/work"
+		"/work",
+		"--shm-size=8gb",
 	],
-	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
-	// Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
-	//"mounts": [
-	//	"source=${localEnv:HOME}/dataset,target=/home/jovyan/dataset,type=bind"
-	//],
+	"mounts": [
+		"source=${localEnv:HOME}/dataset,target=/home/jovyan/dataset,type=bind"
+	],
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
 	// "remoteUser": "vscode"
 }
