@@ -1,4 +1,4 @@
-from myleet import mypow
+from pydev_poetry.myleet import mypow
 import math
 
 

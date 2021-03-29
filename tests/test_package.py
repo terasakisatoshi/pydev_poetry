@@ -1,4 +1,4 @@
-from hello import greet
+from pydev_poetry.hello import greet
 
 
 def test_greet():
