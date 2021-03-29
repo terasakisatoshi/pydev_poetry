@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "pydevpoetry"
+name = "pydev_poetry"
 packages = [
-    { include = "hello", from = "src" },
+    { include = "pydev_poetry", from = "src" },
 ]
 version = "0.1.0"
 description = "mysample"
