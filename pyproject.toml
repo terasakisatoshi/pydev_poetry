@@ -29,6 +29,7 @@ jupyter_nbextensions_configurator = "^0.4.1"
 jupyterlab-code-formatter = "^1.4.2"
 lckr-jupyterlab-variableinspector = "^3.0.6"
 pytest = "^6.2.2"
+autopep8 = "^1.5.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

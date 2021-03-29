@@ -42,9 +42,9 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
-WORKDIR /workspaces/
-RUN mkdir -p /workspaces/
-RUN chown -R ${NB_UID} /workspaces/
+WORKDIR /work/
+RUN mkdir -p /work/
+RUN chown -R ${NB_UID} /work/
 
 USER ${NB_USER}
 
@@ -67,7 +67,7 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 #    && \
 #    echo Done
 
-COPY pyproject.toml poetry.toml poetry.lock /workspaces/
+COPY pyproject.toml poetry.toml poetry.lock /work/
 RUN pip3 --disable-pip-version-check \
     install poetry && \
     poetry install --no-root && \
@@ -120,3 +120,4 @@ RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension &
 ' >> ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension/tracker.jupyterlab-settings
 
 EXPOSE 8888
+CMD ["poetry", "run", "python3"]
