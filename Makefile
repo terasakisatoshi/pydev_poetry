@@ -1,4 +1,4 @@
-.phony: all, build, test, clean
+.PHONY: all build test clean
 
 all: build
 
