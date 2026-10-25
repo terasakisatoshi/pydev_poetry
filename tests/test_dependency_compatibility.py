@@ -72,3 +72,119 @@ def test_network_dependencies_preserve_verification_and_encoding():
     response = urllib3.response.HTTPResponse(body=io.BytesIO(b"payload"))
     assert response.data == b"payload"
     assert json_decode(json_encode({"ok": True})) == {"ok": True}
+
+
+def test_lab4_cli_and_widget_jupytext_roundtrip():
+    import ipywidgets
+    import jupytext
+    import jupyterlab
+
+    assert jupyterlab.__version__.startswith("4.")
+    notebook = nbformat.v4.new_notebook(
+        cells=[nbformat.v4.new_code_cell("print(2 + 2)")]
+    )
+    text = jupytext.writes(notebook, fmt="py:percent")
+    assert jupytext.reads(text, fmt="py:percent").cells[0].source == "print(2 + 2)"
+    widget = ipywidgets.IntSlider(value=3)
+    assert widget.get_state()["value"] == 3
+    widget.close()
+    subprocess.run(
+        [sys.executable, "-m", "jupyterlab", "--version"],
+        check=True,
+        capture_output=True,
+        timeout=30,
+    )
+
+
+def test_classic_extension_setup_and_prebuilt_lab_extensions(tmp_path):
+    env = dict(os.environ)
+    env["JUPYTER_CONFIG_DIR"] = str(tmp_path / "config")
+    env["JUPYTER_DATA_DIR"] = str(tmp_path / "data")
+    commands = [
+        ["contrib", "nbextension", "install", "--user"],
+        ["nbextensions_configurator", "enable", "--user"],
+        ["serverextension", "enable", "jupytext", "--user"],
+    ]
+    for extension in (
+        "code_prettify/autopep8",
+        "select_keymap/main",
+        "highlight_selected_word/main",
+        "toggle_all_line_numbers/main",
+        "varInspector/main",
+        "toc2/main",
+        "equation-numbering/main",
+        "execute_time/ExecuteTime",
+    ):
+        commands.append(["nbextension", "enable", extension, "--user"])
+    for command in commands:
+        subprocess.run(
+            [sys.executable, "-m", "jupyter", *command],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            env=env,
+        )
+    result = subprocess.run(
+        [sys.executable, "-m", "jupyter", "labextension", "list"],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    output = result.stdout + result.stderr
+    assert "incompatible" not in output
+    for extension in (
+        "jupyterlab-jupytext",
+        "jupyterlab_code_formatter",
+        "@jupyter-widgets/jupyterlab-manager",
+    ):
+        assert extension in output
+
+
+@pytest.mark.skipif(
+    os.environ.get("GITHUB_ACTIONS") != "true",
+    reason="Server sockets are validated on GitHub Actions",
+)
+def test_lab_server_serves_login_page(tmp_path):
+    import socket
+    import time
+
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "jupyterlab",
+            "--no-browser",
+            "--ip=127.0.0.1",
+            f"--port={port}",
+            "--ServerApp.port_retries=0",
+            f"--ServerApp.root_dir={tmp_path}",
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    try:
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline:
+            assert process.poll() is None, "JupyterLab exited before serving HTTP"
+            try:
+                response = requests.get(f"http://127.0.0.1:{port}/lab", timeout=2)
+                if response.status_code == 200:
+                    assert "Jupyter" in response.text
+                    break
+            except requests.ConnectionError:
+                pass
+            time.sleep(0.5)
+        else:
+            pytest.fail("JupyterLab did not serve its login page within 60 seconds")
+    finally:
+        process.terminate()
+        try:
+            process.wait(timeout=15)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=5)
