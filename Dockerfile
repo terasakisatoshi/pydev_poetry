@@ -30,11 +30,6 @@ RUN apt-get update -y && \
     && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* # clean up
 
-RUN apt-get update && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* # clean up
-
 # Keep the CUDA/Ubuntu base and system Python unchanged; build Python separately.
 ARG PYTHON_VERSION=3.11.17
 ARG PYTHON_SHA256=bfb74ad39efae27cda510f134ab408e00f9992c56851cfc0b1cdb5646da11599
@@ -71,22 +66,6 @@ USER ${NB_USER}
 ENV PATH=${HOME}/.local/bin:$PATH
 ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 
-#RUN pip3 install \
-#    # Install tools for Jupyter Notebook/Lab
-#    jupyter \
-#    jupyterlab \
-#    jupytext \
-#    ipywidgets \
-#    jupyter-contrib-nbextensions \
-#    jupyter-nbextensions-configurator \
-#    jupyterlab_code_formatter \
-#    lckr-jupyterlab-variableinspector \
-    # Install tools for development \
-#    poetry autopep8 black isort \
-#    --user \
-#    && \
-#    echo Done
-
 COPY pyproject.toml poetry.toml poetry.lock /work/
 RUN poetry env use /opt/python311/bin/python3.11 && \
     poetry install --no-root && \
@@ -107,26 +86,16 @@ RUN poetry run jupyter contrib nbextension install --user && \
     poetry run jupyter nbextension enable execute_time/ExecuteTime --user && \
     echo Done
 
-# Install/enable extension for JupyterLab users
-RUN poetry run jupyter labextension install @jupyterlab/toc --no-build && \
-    poetry run jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    poetry run jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
-    poetry run jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
-    poetry run jupyter labextension install jupyterlab-jupytext --no-build && \
-    poetry run jupyter lab build -y && \
-    poetry run jupyter lab clean -y && \
-    npm cache clean --force && \
-    rm -rf ${HOME}/.cache/yarn && \
-    rm -rf ${HOME}/.node-gyp && \
-    echo Done
+# Lab 4 uses prebuilt extensions from the locked Python dependencies.
+# ToC is built in; widgets, Jupytext, and formatter are prebuilt.
+# Legacy Sublime keymap and Monokai++ source extensions are incompatible/unsupported.
+RUN poetry run jupyter labextension list && \
+    poetry run jupyter lab --version
 
-# Set color theme Monokai++ by default (The selection is due to my hobby)
-RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension && echo '\
-{\n\
-    "theme": "Monokai++"\n\
-}\n\
-\
-' >> ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension/themes.jupyterlab-settings
+# Use the maintained built-in dark theme instead of the removed Monokai++ extension.
+RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension && \
+    printf '%s\n' '{"theme": "JupyterLab Dark"}' > \
+    ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension/themes.jupyterlab-settings
 
 # Show line numbers by default
 RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension && echo '\
