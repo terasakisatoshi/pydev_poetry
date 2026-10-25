@@ -12,8 +12,16 @@ RUN apt-get update -y && \
     python3 \
     python3-pip \
     libpython3-dev \
-    python3.8 \
-    libpython3.8-dev \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libffi-dev \
+    liblzma-dev \
+    uuid-dev \
+    tk-dev \
+    xz-utils \
     libopencv-dev \
     curl \
     wget \
@@ -27,9 +35,21 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* # clean up
 
-# modify default python3 as python3.8
-RUN cd $(dirname $(which python3.8)) && rm python3 && ln -s python3.8 python3
-RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python3
+# Keep the CUDA/Ubuntu base and system Python unchanged; build Python separately.
+ARG PYTHON_VERSION=3.11.17
+ARG PYTHON_SHA256=bfb74ad39efae27cda510f134ab408e00f9992c56851cfc0b1cdb5646da11599
+RUN curl -fSL "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz" -o /tmp/python.tar.xz && \
+    echo "${PYTHON_SHA256}  /tmp/python.tar.xz" | sha256sum -c - && \
+    mkdir /tmp/python-src && tar -xJf /tmp/python.tar.xz -C /tmp/python-src --strip-components=1 && \
+    cd /tmp/python-src && ./configure --prefix=/opt/python311 --with-ensurepip=install && \
+    make -j2 && make altinstall && \
+    ln -s python3.11 /opt/python311/bin/python3 && \
+    ln -s pip3.11 /opt/python311/bin/pip3 && \
+    rm -rf /tmp/python-src /tmp/python.tar.xz
+ENV PATH=/opt/python311/bin:/opt/poetry/bin:$PATH
+RUN python3 -c "import ssl, sqlite3, bz2, lzma, ctypes; import sys; assert sys.version_info[:2] == (3, 11)" && \
+    python3 -m venv /opt/poetry && \
+    /opt/poetry/bin/python -m pip install --no-cache-dir poetry==2.2.1
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
@@ -68,8 +88,7 @@ ENV JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
 #    echo Done
 
 COPY pyproject.toml poetry.toml poetry.lock /work/
-RUN pip3 --disable-pip-version-check \
-    install poetry && \
+RUN poetry env use /opt/python311/bin/python3.11 && \
     poetry install --no-root && \
     echo Done
 
