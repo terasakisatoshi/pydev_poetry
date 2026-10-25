@@ -16,7 +16,10 @@ matplotlib = "^3.3.3"
 opencv-python = "^4.5.1"
 
 [tool.poetry.dev-dependencies]
-black = "^24.3"
+notebook = ">=6.5.7,<7"
+nbconvert = ">=7.17.2,<8"
+mistune = ">=3.3.3,<4"
+black = "^26.3.1"
 isort = "^5.7.0"
 autoflake = "^1.4"
 mock = "^4.0.3"
@@ -35,4 +38,3 @@ autopep8 = "^1.5.6"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
