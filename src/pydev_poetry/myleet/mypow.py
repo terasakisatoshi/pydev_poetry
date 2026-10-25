@@ -64,7 +64,7 @@ class Solution:
                 cache[POW2_0_32[c]] = cache[POW2_0_32[c - 1]] * cache[POW2_0_32[c - 1]]
             return cache[POW2_0_32[max_c]], residual_n
 
-        r = 1
+        r: float = 1
         r_ = 0
         while True:
             if n <= 4:
@@ -89,6 +89,3 @@ class Solution:
                 return r
             else:
                 return 1 / r
-
-
-
